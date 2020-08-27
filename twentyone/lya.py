@@ -2,7 +2,7 @@ import numpy as np
 from scipy.optimize import root, minimize, brentq
 from scipy.integrate import quad
 from scipy.interpolate import interp1d
-from tqdm import tqdm
+from tqdm.notebook import tqdm
 
 from twentyone.units import *
 from twentyone.xray import XRay
@@ -173,8 +173,8 @@ class LymanAlpha(XRay):
         self.z_J_interp_ary = np.linspace(self.z_min, self.z_max, 1000)
 
         # E_per_baryon = 5.4 MeV for complete H burning to He-4 (page 11 of astro-ph/0507102)
-        self.J_c_per_J_0_ary = np.array([self.J_c_per_J_0(z, 1e5 * Kelv, 5.4 * MeV) for z in tqdm.notebook.tqdm(self.z_J_interp_ary)])
-        self.J_i_per_J_0_ary = np.array([self.J_i_per_J_0(z, 1e5 * Kelv, 5.4 * MeV) for z in tqdm.notebook.tqdm(self.z_J_interp_ary)])
+        self.J_c_per_J_0_ary = np.array([self.J_c_per_J_0(z, 1e5 * Kelv, 5.4 * MeV) for z in tqdm(self.z_J_interp_ary)])
+        self.J_i_per_J_0_ary = np.array([self.J_i_per_J_0(z, 1e5 * Kelv, 5.4 * MeV) for z in tqdm(self.z_J_interp_ary)])
 
         self.J_c_per_J_0_interp = interp1d(self.z_J_interp_ary, self.f_star_L / self.f_star_X * self.J_c_per_J_0_ary)
         self.J_i_per_J_0_interp = interp1d(self.z_J_interp_ary, self.f_star_L / self.f_star_X * self.J_i_per_J_0_ary)

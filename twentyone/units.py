@@ -27,6 +27,7 @@ k_B = 1.3806488e-16 * erg / Kelv
 barn = 1e-24 * Centimeter ** 2
 Jy = 1e-23 * erg / Sec / Centimeter ** 2 / Sec ** -1
 Hz = 1 / Sec
+omega_21 = 5.9e-6 * eV
 
 # Electromagnetic units
 # Mx = Centimeter ** 1.5 * Gram ** 0.5 * Sec ** -1

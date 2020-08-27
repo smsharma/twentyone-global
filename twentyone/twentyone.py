@@ -265,7 +265,13 @@ class TwentyOne(LymanAlpha):
         """
         return self.x_CMB(T_s, x_e, z) * self.tau_21(T_s, x_e, z) / (1 + z) * (T_s - T_gamma)
 
-    def mod_f_star(self, f_star_X, f_star_L, T_vir_cut=None, hmf_kwargs=None):
+    def mod_f_star(self, f_star_X=None, f_star_L=None, T_vir_cut=None, hmf_kwargs=None):
+
+        if f_star_X is None:
+            f_star_X = self.f_star_X
+
+        if f_star_L is None:
+            f_star_L = self.f_star_L
 
         if hmf_kwargs is not None:
             self.hmf_kwargs = hmf_kwargs

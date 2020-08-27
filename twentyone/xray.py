@@ -1,4 +1,5 @@
 from astropy.cosmology import FlatLambdaCDM
+import astropy.units as u
 import numpy as np
 from scipy.optimize import root
 from scipy.integrate import trapz
@@ -6,7 +7,7 @@ from scipy.interpolate import interp1d
 from scipy.misc import derivative
 from colossus.lss import mass_function
 from colossus.cosmology import cosmology
-from tqdm import tqdm
+from tqdm.notebook import tqdm
 
 from twentyone.units import *
 
@@ -141,7 +142,7 @@ class XRay:
         """ Make interpolation table of derivative of star formation rate integral over halo mass function
         """
         self.z_interp_ary = np.linspace(self.z_min, 450.0, 1000)
-        self.D_int_halo_z_ary = [self.D_int_halo_z(z) for z in tqdm.notebook.tqdm(self.z_interp_ary)]
+        self.D_int_halo_z_ary = [self.D_int_halo_z(z) for z in tqdm(self.z_interp_ary)]
         self.D_int_halo_z_interp = interp1d(self.z_interp_ary, self.D_int_halo_z_ary, bounds_error=False, kind="linear", fill_value=0.0)  # Dodgy interpolation
 
     def dz_dt(self, z):
