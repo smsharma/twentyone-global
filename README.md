@@ -23,9 +23,9 @@ The dependencies of the code are listed in [environments.yml](environment.yml). 
 -  Andrea Caputo; andrea dot caputo at uv dot es
 -  Hongwan Liu; hongwanl at princeton dot edu
 -  Siddharth Mishra-Sharma; sm8383 at nyu dot edu
--  Maxim Pospelov; pospelov@umn.edu
+-  Maxim Pospelov; pospelov at umn dot edu
 -  Joshua T. Ruderman; ruderman at nyu dot edu
--  Alfredo Urbano; alfredo.urbano@sissa.it
+-  Alfredo Urbano; alfredo dot urbano at sissa dot it
 
 ## References
 
