@@ -253,7 +253,7 @@ class TwentyOne(LymanAlpha):
         return self.dz_dt(z) ** -1 * Gamma_rec
 
     def reio_rate(self, z, x_e):
-        """ Reionization rate (TODO: where from)
+        """ Reionization rate (Eq. 8 of 1003.3878)
         """
         f_ion = 10 ** self.l10_f_ion_int(np.log10(x_e))
         f_heat = 10 ** self.l10_f_heat_int(np.log10(x_e))
