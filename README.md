@@ -1,6 +1,6 @@
 # twentyone-global
 
-Simplified framework for modeling the global 21-cm absorption signal, with a focus on studying the implications of non-standard 21-cm CMB temperature evolution. For details about the model, see [2009.xxxx](https://arxiv.org/abs/2009.xxxx).
+Simplified framework for modeling the global 21-cm absorption signal, with a focus on studying the implications of non-standard 21-cm CMB temperature evolution. For details about the modeling, see [2009.03899](https://arxiv.org/abs/2009.03899).
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-red.svg)](https://opensource.org/licenses/MIT)
 [![arXiv](https://img.shields.io/badge/arXiv-2009.03899%20-green.svg)](https://arxiv.org/abs/2009.03899)
