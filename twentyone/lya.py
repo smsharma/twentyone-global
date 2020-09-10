@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 from scipy.optimize import root, minimize, brentq
 from scipy.integrate import quad
@@ -22,7 +24,7 @@ class LymanAlpha(XRay):
             :param sed_X_kwargs: Parameters for X-ray luminosity
         """
 
-        XRay.__init__(self, cosmo=cosmo, z_min=z_min, z_max=2 * z_max, f_star=f_star_X, T_vir_cut=T_vir_cut, sed=sed_X, sed_kwargs=sed_X_kwargs, hmf_kwargs=hmf_kwargs)
+        XRay.__init__(self, cosmo=cosmo, z_min=z_min, z_max=2 * z_max, f_star_X=f_star_X, T_vir_cut=T_vir_cut, sed=sed_X, sed_kwargs=sed_X_kwargs, hmf_kwargs=hmf_kwargs)
 
         self.xi_3 = 1.20205  # Apéry's constant, from Wikipedia
         self.Y_p = 0.247  # Helium-to-hydrogen mass fraction, from 1912.01132
@@ -40,6 +42,8 @@ class LymanAlpha(XRay):
         self.f_star_X = f_star_X
         self.f_star_L = f_star_L
 
+        self.data_path = str(Path(__file__).parent / "../data/")
+
         # Load/create various interpolations
         self.load_L_interpolations()
         self.make_J_interpolation()
@@ -50,16 +54,16 @@ class LymanAlpha(XRay):
 
         # Probabilities of producing a Ly-a photon after exciting HI to the np configuration
         # From Tab. 1 of astro-ph/0507102
-        Pnp_list = np.loadtxt("../data/PnpList.dat")
+        Pnp_list = np.loadtxt(self.data_path + "/PnpList.dat")
         self.Pnp_ary = np.zeros(int(np.max(Pnp_list[:, 0]) + 1))
         self.Pnp_ary[np.array(Pnp_list[:, 0], dtype=np.int32)] = Pnp_list[:, 1]
 
         # Fraction of initial electron energy that goes into heating
         # and deposited in HI Ly-a photons, from Fig. 4 of 0910.4410
         # assuming E_e = 3 keV
-        f_heat = np.loadtxt("../data/f_heat.txt", skiprows=1)
-        f_Lya = np.loadtxt("../data/f_Lya.txt", skiprows=1)
-        f_ion = np.loadtxt("../data/f_ion.txt", skiprows=1)
+        f_heat = np.loadtxt(self.data_path + "/f_heat.txt", skiprows=1)
+        f_Lya = np.loadtxt(self.data_path + "/f_Lya.txt", skiprows=1)
+        f_ion = np.loadtxt(self.data_path + "/f_ion.txt", skiprows=1)
 
         # Create interpolation
         self.l10_f_heat_int = interp1d((f_heat[:, 0]), (f_heat[:, 1]), bounds_error=False, fill_value="extrapolate")
@@ -170,7 +174,7 @@ class LymanAlpha(XRay):
     def make_J_interpolation(self):
         """ Create interpolations for Lyman-A heating
         """
-        self.z_J_interp_ary = np.linspace(self.z_min, self.z_max, 1000)
+        self.z_J_interp_ary = np.linspace(self.z_min, self.z_max, 2000)
 
         # E_per_baryon = 5.4 MeV for complete H burning to He-4 (page 11 of astro-ph/0507102)
         self.J_c_per_J_0_ary = np.array([self.J_c_per_J_0(z, 1e5 * Kelv, 5.4 * MeV) for z in tqdm(self.z_J_interp_ary)])

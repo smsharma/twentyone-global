@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 from twentyone.units import *
 from twentyone.physics_standalone import alpha_recomb, peebles_C
@@ -29,6 +31,9 @@ class TwentyOne(LymanAlpha):
 
         self.z_reio = z_reio  # Redshift at reionization
         self.use_hirata_fits = use_hirata_fits  # Whether to use fitting functions from Hirata for S_alpha and T_c
+
+        self.data_path = str(Path(__file__).parent / "../data/")
+
         self.load_constants()  # Set class-specific constants
         self.load_interpolations()  # Load interpolation tables
         self.initialize_class_inst()  # Initialize CLASS instance
@@ -69,7 +74,7 @@ class TwentyOne(LymanAlpha):
         """
 
         ## Load table from https://github.com/ntveem/lyaheating
-        heffs = np.load("../data/heffs.npy")
+        heffs = np.load(self.data_path + "/heffs.npy")
         # heffs[:, :, :, 1, 0][np.where(heffs[:, :, :, 1, 0] < 0)] = 1e-15
 
         # Argument arrays for T_k, T_s,...
@@ -92,9 +97,9 @@ class TwentyOne(LymanAlpha):
         ## Rate coefficients
 
         # From astro-ph/0608067, Table 1
-        kappa_10_eH_ary = np.loadtxt("../data/kappa_10_eH_tab.dat")
+        kappa_10_eH_ary = np.loadtxt(self.data_path + "/kappa_10_eH_tab.dat")
         # From Zygelman (2005), http://adsabs.harvard.edu/abs/2005ApJ...622.1356Z, Table 2
-        kappa_10_HH_ary = np.loadtxt("../data/kappa_10_HH_tab.dat")
+        kappa_10_HH_ary = np.loadtxt(self.data_path + "/kappa_10_HH_tab.dat")
 
         self.l10_kappa_10_eH_interp = interp1d(np.log10(kappa_10_eH_ary)[:, 0], np.log10(kappa_10_eH_ary * Centimeter ** 3 / Sec)[:, 1], bounds_error=False, fill_value="extrapolate")
         self.l10_kappa_10_HH_interp = interp1d(np.log10(kappa_10_HH_ary)[:, 0], np.log10(kappa_10_HH_ary * Centimeter ** 3 / Sec)[:, 1], bounds_error=False, fill_value="extrapolate")
@@ -284,11 +289,12 @@ class TwentyOne(LymanAlpha):
 
         self.D_int_halo_z_interp = interp1d(self.z_interp_ary, f_star_X / self.f_star_X * np.array(self.D_int_halo_z_ary), bounds_error=False, kind="linear", fill_value=0.0)  # Dodgy interpolation
 
+        self.f_star_X = f_star_X
+
         self.J_c_per_J_0_interp = interp1d(self.z_J_interp_ary, f_star_L / self.f_star_L * self.J_c_per_J_0_ary)
         self.J_i_per_J_0_interp = interp1d(self.z_J_interp_ary, f_star_L / self.f_star_L * self.J_i_per_J_0_ary)
 
         self.f_star_L = f_star_L
-        self.f_star_X = f_star_X
 
 
 class TwentyOneSolver:

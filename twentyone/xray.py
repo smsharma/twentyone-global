@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from astropy.cosmology import FlatLambdaCDM
 import astropy.units as u
 import numpy as np
@@ -13,7 +15,7 @@ from twentyone.units import *
 
 
 class XRay:
-    def __init__(self, z_min, z_max, T_vir_cut=1e4 * Kelv, f_star=0.004, mu=0.59, cosmo=None, sed="PL", M_min=None, sed_kwargs={}, hmf_kwargs={"mdef": "vir", "model": "despali16"}):
+    def __init__(self, z_min, z_max, T_vir_cut=1e4 * Kelv, f_star_X=0.004, mu=0.59, cosmo=None, sed="PL", M_min=None, sed_kwargs={}, hmf_kwargs={"mdef": "vir", "model": "despali16"}):
         """ Class for calculating X-ray heating
 
             :param z_min: Minimum redshift (for interpolation tables)
@@ -39,7 +41,7 @@ class XRay:
         self.mu = mu
         self.T_vir_cut = T_vir_cut
         self.M_min_val = M_min
-        self.f_star = f_star
+        self.f_star_X = f_star_X
         self.z_min = z_min
         self.z_max = z_max
         self.sed = sed
@@ -108,13 +110,13 @@ class XRay:
         """
         return 10 ** root(lambda logM: self.T_vir(10 ** logM * (M_s / self.cosmo.h), z) - T_vir_cut, 8).x * (M_s / self.cosmo.h)
 
-    def f_star_T_vir_cut(self, M, z, f_star, T_vir_cut):
+    def f_star_T_vir_cut(self, M, z, f_star_X, T_vir_cut):
         """ Star formation efficiency for a given halo mass and redshift accounting for virial temperature cut
         """
         if self.M_min_val is None:
-            return f_star * np.heaviside(M - self.M_min(T_vir_cut, z), 0.0)
+            return f_star_X * np.heaviside(M - self.M_min(T_vir_cut, z), 0.0)
         else:
-            return f_star * np.heaviside(M - self.M_min_val, 0.0)
+            return f_star_X * np.heaviside(M - self.M_min_val, 0.0)
 
     def dndlnm(self, M, z):
         """ Halo mass function for a given halo mass and redshift
@@ -122,21 +124,21 @@ class XRay:
         """
         return mass_function.massFunction(M / (M_s / self.cosmo.h), z, q_in="M", q_out="dndlnM", **self.hmf_kwargs) * (Mpc / self.cosmo.h) ** -3
 
-    def int_star(self, z, f_star):
+    def int_star(self, z, f_star_X):
         """ Integrate star formation efficiency over the halo mass function
         """
         M_ary = np.logspace(6, 15, 1000) * M_s / self.cosmo.h
-        return trapz(self.f_star_T_vir_cut(M_ary, z, f_star, self.T_vir_cut) * self.dndlnm(M_ary, z), M_ary)
+        return trapz(self.f_star_T_vir_cut(M_ary, z, f_star_X, self.T_vir_cut) * self.dndlnm(M_ary, z), M_ary)
 
-    def int_halo(self, f_star, z):
+    def int_halo(self, f_star_X, z):
         """ Add f_star dependence to star formation rate integral over halo mass function
         """
-        return self.int_star(z, f_star)
+        return self.int_star(z, f_star_X)
 
     def D_int_halo_z(self, z):
         """ Derivative of star formation rate integral over halo mass function
         """
-        return derivative(lambda z: self.int_halo(self.f_star, z), x0=z, dx=z * 1e-2)
+        return derivative(lambda z: self.int_halo(self.f_star_X, z), x0=z, dx=z * 1e-2)
 
     def make_D_int_halo_z_interp(self):
         """ Make interpolation table of derivative of star formation rate integral over halo mass function

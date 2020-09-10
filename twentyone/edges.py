@@ -36,6 +36,9 @@ class EDGES_fit:
         return 4 * (nu - nu_0) ** 2 / w ** 2 * np.log(-np.log((1 + np.exp(-tau)) / 2.0) / tau)
 
 
-opz_to_freq = lambda opz: ((omega_21 / (opz) / (1e6 * Hz) / (2 * np.pi)))
-freq_to_opz = lambda nu: ((omega_21 / (2 * np.pi * (nu * 1e6 * Hz))))
+def opz_to_freq(opz):
+    return ((omega_21 / (opz) / (1e6 * Hz) / (2 * np.pi)))
+
+def freq_to_opz(nu):
+    return ((omega_21 / (2 * np.pi * (nu * 1e6 * Hz))))
 
